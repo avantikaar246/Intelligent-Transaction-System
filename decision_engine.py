@@ -2,7 +2,6 @@
 import pickle
 import os
 
-from pyparsing import Optional
 from ml.feature_utils import extract_features
 from typing import Optional
 
