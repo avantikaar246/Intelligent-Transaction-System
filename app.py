@@ -3,29 +3,19 @@
 from flask import Flask, request, jsonify
 
 from ml.feature_utils import extract_features
-from decision_engine import decide, map_probability_to_risk
+from decision_engine import decide, get_risk_level
 from visa.pav import validate_account
 from visa.account_attributes import get_account_attributes
 from visa.bin_lookup import get_bin_info
 
-import joblib
-
 app = Flask(__name__)
-
-# Load ML model (trained by Member 1)
-model = joblib.load("ml/risk_model.pkl")
 
 
 @app.route("/evaluate-transaction", methods=["POST"])
 def evaluate_transaction():
     data = request.json
 
-    # 1️⃣ Extract ML features
-    features = extract_features(data)
-    probability = model.predict_proba([features])[0][1]
-
-    # 2️⃣ Convert probability to risk
-    risk_level = map_probability_to_risk(probability)
+    risk_level = get_risk_level(data)
 
     visa_results = {}
 
